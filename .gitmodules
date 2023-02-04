@@ -1,3 +1,4 @@
-[submodule "testmod"]
-	path = testmod
+
+[submodule "test/craftinginterpreters"]
+	path = test/craftinginterpreters
 	url = https://github.com/munificent/craftinginterpreters.git
