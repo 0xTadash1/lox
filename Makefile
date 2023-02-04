@@ -1,15 +1,12 @@
-TESTMOD := testmod
-TESTMOD_REPO := https://github.com/munificent/craftinginterpreters.git
+TEST_MODULE_REPO := https://github.com/munificent/craftinginterpreters.git
+TEST_MODULE := test/craftinginterpreters
+TEST_TOOL := $(TEST_MODULE)/tool/bin/test.dart
 
-test: $(TESTMOD)
-	: || dart $(TESTMOD)/tool/bin/test.dart
+test: $(TEST_TOOL)
+	: || dart $(TEST_TOOL)
 
-$(TESTMOD):
-	# This target makes a commit. Empty the staging area.
-	@[[ -z "$$(git ls-files)" ]]
-	git submodule add '$(TESTMOD_REPO)' $(TESTMOD)
-	git commit -m '[MAKE]: add module, $(TESTMOD)'
-	# sparse-checkout: /test/, /tool/
-	@git -C $(TESTMOD) config core.sparsecheckout true
-	@echo $$'/test/\n/tool/' > .git/modules/$(TESTMOD)/info/sparse-checkout
-	@git -C $(TESTMOD) read-tree -mu HEAD
+$(TEST_TOOL):
+	git submodule init
+	git clone --depth=1 --filter=blob:none --sparse $(TEST_MODULE_REPO) $(TEST_MODULE)
+	git submodule absorbgitdirs
+	git -C test/craftinginterpreters sparse-checkout set test/ tool/
